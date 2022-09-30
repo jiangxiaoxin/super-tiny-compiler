@@ -1,32 +1,29 @@
-import { AST, AstNode, AstNodeType, AstTypes, Token, Tokens, TokenTypes } from "./types";
+import { AstRootNode, AstNode, AstTypes, Token, Tokens, TokenTypes, AstChildNode, AstNumberLiteralNode, AstCallExpressionNode } from "./types";
 
 
-function createAstNode(type: AstNodeType, nameOrValue: string): AstNode {
-  if(type == AstTypes.NumberLiteral) {
-    return {
-      type,
-      value: nameOrValue
-    }
+function createAstNumberLiterialNode(value: string): AstNumberLiteralNode {
+  return {
+    type: AstTypes.NumberLiteral,
+    value
   }
-  if(type == AstTypes.CallExpression) {
-    return {
-      type,
-      name: nameOrValue,
-      params: []
-    }
+}
+
+function createAstCallExpressionNode(name: string): AstCallExpressionNode {
+  return {
+    type: AstTypes.CallExpression,
+    name,
+    params: []
   }
-  
-  throw new Error(`创建ast节点失败 type:${type}`)
 }
 
 /**
  * tokens => ast
  * @param tokens token[]
  */
-export function parser(tokens: Tokens): AST {
+export function parser(tokens: Tokens): AstRootNode {
   let current = 0
   let n = tokens.length;
-  let ast:AST = {
+  let ast:AstRootNode = {
     type: AstTypes.Program,
     body: []
   }
@@ -34,20 +31,20 @@ export function parser(tokens: Tokens): AST {
 
   let token: Token
   // 解出具体的节点
-  function helper(): AstNode {
+  function helper(): AstChildNode {
     token = tokens[current]
 
 
     if(token.type == TokenTypes.NUMBER) {
       current++
-      return createAstNode(AstTypes.NumberLiteral, token.value)
+      return createAstNumberLiterialNode(token.value)
     }
 
     if(token.type == TokenTypes.PAREN && token.value == "(") {
       // 开启新的 callexpression
       current++
       token = tokens[current]
-      let node = createAstNode(AstTypes.CallExpression, token.value)
+      let node = createAstCallExpressionNode(token.value)
 
       current++
       token = tokens[current]
