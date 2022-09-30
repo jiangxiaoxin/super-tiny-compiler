@@ -15,5 +15,7 @@ nodemon --config nodemon.json 让nodemon按照配置执行
 ```
 
 1. 可以用ts来写代码，写完会编译运行
-2. 可以运行test测试集
-3. 使用es module的import写法来写。要进行转义。
+2. 可以运行test测试集.
+3. 测试集挺好用的，可以直接断点运行
+4. 使用es module的import写法来写。要进行转义。
+   
