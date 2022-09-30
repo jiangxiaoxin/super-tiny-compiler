@@ -1,5 +1,4 @@
 import {
-  AstNode,
   AstTypes,
   AstParentNode,
   Visitor,

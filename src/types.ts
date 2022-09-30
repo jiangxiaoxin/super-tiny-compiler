@@ -17,6 +17,7 @@ export enum AstTypes {
   Program = "Program",
   NumberLiteral = "NumberLiteral",
   CallExpression = "CallExpression",
+  ExpressionStatement = "ExpressionStatement"
 }
 
 export interface AstBasicNode {
@@ -48,8 +49,8 @@ export type AstNode = AstParentNode|AstChildNode
 export type VisitorFn = (node: AstNode, parent: AstParentNode) => void;
 
 export interface VisitorOption {
-  enter: VisitorFn;
-  exit: VisitorFn;
+  enter?: VisitorFn;
+  exit?: VisitorFn;
 }
 
 
@@ -58,5 +59,4 @@ export interface Visitor {
   [AstTypes.CallExpression]?: VisitorOption;
   [AstTypes.NumberLiteral]?: VisitorOption;
 }
-
 
