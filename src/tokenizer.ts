@@ -11,6 +11,11 @@ function createToken(type: TokenTypes, value: string): Token {
   };
 }
 
+/**
+ * code string => token[]
+ * @param code string
+ * @returns tokens
+ */
 export function tokenizer(code: string): TokenizerResult {
   if (!code) {
     return null;
