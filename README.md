@@ -1,4 +1,12 @@
-# 运行说明
+
+# super-tiny-compiler
+
+超简的编译器。走一遍编译的流程。
+
+[the super tiny compiler](https://github.com/jamiebuilds/the-super-tiny-compiler)
+
+
+## 运行说明
 
 ```shell
 
