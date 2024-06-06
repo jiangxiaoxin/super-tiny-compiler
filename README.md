@@ -5,7 +5,6 @@
 
 [the super tiny compiler](https://github.com/jamiebuilds/the-super-tiny-compiler)
 
-
 ## 运行说明
 
 ```shell
@@ -24,6 +23,6 @@ nodemon --config nodemon.json 让nodemon按照配置执行
 
 1. 可以用ts来写代码，写完会编译运行
 2. 可以运行test测试集.
-3. 测试集挺好用的，可以直接断点运行
-4. 使用es module的import写法来写。要进行转义。
-   
+3. 测试集挺好用的，可以直接断点运行,
+4. 使用es module的import写法来写。要进行转义。可以通过测试集直接起debug
+5. 其他的vscode f5就可以
