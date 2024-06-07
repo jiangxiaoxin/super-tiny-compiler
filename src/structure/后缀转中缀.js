@@ -1,8 +1,11 @@
 // 逆波兰表达式==》正常的可阅读表达
+// 后缀式改成中缀式
 // 前提：格式正确
 
-const a = "a+b*c+(d*e-f)*g";
-const b = "abc*+de*f-g*+";
+// const a = "a+b*c+(d*e-f)*g";
+// const b = "abc*+de*f-g*+";
+const a = "a+b*c+(d*e+f)*(g-h)+e";
+const b = "abc*+de*f+gh-*+e+";
 
 const operator = ["+", "-", "*", "/"];
 const paren = ["(", ")"];
@@ -22,7 +25,7 @@ const transform = (input) => {
       } else {
         let value = "";
         if (y.includes("+") || y.includes("-")) {
-          // 优先级低
+          // 前面的两个操作数中，有优先级更低的，那添加上char之后，就会改变计算顺序，所以要添加括号
           value = "(" + y + ")";
         } else {
           value = y;
