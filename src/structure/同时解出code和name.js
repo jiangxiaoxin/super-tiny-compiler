@@ -8,12 +8,17 @@ const formulas = [
   "@006@-(-7)",
   "7+@001@",
 ];
+const chinese = ["2号节点*3号节点-(-7)+(4号节点+5号节点)/6号节点"];
 const NUMBER = /[0-9]/;
-const tokenizer = (code) => {
+const tokenizer = (code, cstr) => {
   let current = 0;
   let n = code.length;
   let tokens = [];
   let char;
+
+  let map = {};
+  let nodeName;
+  let posInCStr = 0;
 
   while (current < n) {
     char = code[current];
@@ -23,6 +28,7 @@ const tokenizer = (code) => {
         value: char,
       });
       current++;
+      posInCStr++;
       continue;
     }
     if (char === ")") {
@@ -31,9 +37,11 @@ const tokenizer = (code) => {
         value: char,
       });
       current++;
+      posInCStr++;
       continue;
     }
     if (char === "@") {
+      // 碰到个节点的起始位置了
       let value = char;
       current++;
       while (current < n && code[current] !== "@") {
@@ -41,6 +49,7 @@ const tokenizer = (code) => {
         current++;
       }
       // 要么 current 超界了，要么终于找到匹配的 @了
+      //   可以不考虑超界问题，按规则公式一定是对的
 
       if (current === n) {
         // 这里按照规则，是不会发生这种情况的
@@ -53,6 +62,21 @@ const tokenizer = (code) => {
         value: value,
       });
       current++;
+
+      if (current < n) {
+        // 上面current++ 是有可能超界了的
+        // 找出下一个字符，然后在汉字公式里找到同样的下一个字符
+        char = code[current];
+        let newIndex = cstr.indexOf(char, posInCStr);
+        let nodeName = cstr.substring(posInCStr, newIndex);
+        map[value] = nodeName;
+        posInCStr = newIndex;
+      } else {
+        let nodeName = cstr.substring(posInCStr);
+        map[value] = nodeName;
+        posInCStr += nodeName.length;
+      }
+
       continue;
     }
     if (char === "+" || char === "*" || char === "/") {
@@ -61,6 +85,7 @@ const tokenizer = (code) => {
         value: char,
       });
       current++;
+      posInCStr++;
       continue;
     }
     if (char === "-") {
@@ -73,8 +98,10 @@ const tokenizer = (code) => {
           value: char,
         });
         current++;
+        posInCStr++;
       } else if (prevToken.type === "paren" && prevToken.value === "(") {
         // 如果前面是个 （，那这就是 负数。强制在负数的前后加一对括号
+        //! 其实这里不对：它完全可以配一个（，再配一个-，再配一个7，再配一个).如果是这样，那这就是4个元素。而这里会把它解成一个元素 -7，那这就怪它不好好配公式了
         // 配置公式的时候，依然是可以用（、-、7、）配置成(-7)这种方式的，而解字符串时就认为是负数 -7.这是因为配置的不合理。公式配置也是有规则要求的
         // !原本即使这样配置触发误解，也可以通过在操作符 - 和 7 之间添加空格来确定是个减号，但有要求不允许出现空格
         let value = char; // -
@@ -99,6 +126,8 @@ const tokenizer = (code) => {
           // 其实后面一定是个 ), 要么就是code格式有问题
           // 包围负数的括号是自己加的，所以回显时要去掉
           current++;
+
+          posInCStr = posInCStr + value.length + 1;
         }
       } else {
         tokens.push({
@@ -106,6 +135,7 @@ const tokenizer = (code) => {
           value: char,
         });
         current++;
+        posInCStr++;
       }
       continue;
     }
@@ -125,47 +155,17 @@ const tokenizer = (code) => {
         value: Number(value),
       });
 
+      posInCStr += value.length; // 在字母的公式里，有一个数字，那同样的在汉字的公式里，也是同样位置，有个同样长度的数字
+
       // 直接继续就可以了
       // 如果越界了,那外层的while循环就停了.如果只是遇到了别的字符,那继续执行循环就行了
       continue;
     }
   }
 
-  return tokens;
+  return [tokens, map];
 };
 
-let tokens = tokenizer(formulas[0]);
+let [tokens, map] = tokenizer(formulas[0], chinese[0]);
 console.log(tokens);
-
-const encoder = (nodes) => {
-  let output = "";
-  let node;
-  for (let i = 0; i < nodes.length; i++) {
-    node = nodes[i];
-    if (node.type === "node") {
-      let next = i + 1;
-      if (next < nodes.length) {
-        let nextNode = nodes[next];
-        if (nextNode.type === "node") {
-          throw new Error("不能连续两个点位");
-        }
-      }
-    }
-    if (node.type === "number" && node.value < 0) {
-      output += `(${node.value})`;
-    } else {
-      output += node.value;
-    }
-  }
-
-  return output;
-};
-
-// const str = encoder(tokens);
-// console.log(str);
-
-// let tokens = [
-//   { type: "node", value: "@002@" },
-//   { type: "node", value: "@002@" },
-// ];
-// const str = encoder(tokens);
+console.log(map);
