@@ -85,9 +85,11 @@ const testSuits = {
   "a+b*c+(d*e+f)*(g-h)+e": "abc*+de*f+gh-*+e+",
 };
 
-for (let key in testSuits) {
-  const afterTransform = testSuits[key];
-  console.log(afterTransform === transform(key));
-}
+// for (let key in testSuits) {
+//   const afterTransform = testSuits[key];
+//   console.log(afterTransform === transform(key));
+// }
 
 // console.log(transform("a+b*c+(d*e+f)*(g-h)+e"));
+
+console.log(transform("a+(b-(c-d)*e)/f-g"));

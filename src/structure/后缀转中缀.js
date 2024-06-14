@@ -50,4 +50,6 @@ const transform = (input) => {
   return stack.pop();
 };
 
-console.log(transform(b));
+// console.log(transform(b));
+
+console.log(transform("abcd-e*-f/+g-"));
