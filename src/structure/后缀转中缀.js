@@ -20,8 +20,17 @@ const transform = (input) => {
     if (operator.includes(char)) {
       const x = stack.pop();
       const y = stack.pop();
-      if (char === "+" || char === "-") {
+      if (char === "+") {
         stack.push(`${y}${char}${x}`);
+      } else if (char === "-") {
+        // - 号对于前面的操作符没影响，但对于后面的操作符会有影响
+        // 比如 前面是 a，后面是 b+c，遇到-，那应该是 a-(b+c)
+        // 这里处理的简单的，最正确的方法：后面的表达式的第一级操作符，不能有+ -
+        if (x.includes("-") || x.includes("+")) {
+          stack.push(`${y}${char}(${x})`);
+        } else {
+          stack.push(`${y}${char}${x}`);
+        }
       } else {
         // ! 这里考虑优先级对于算式的影响是对的，但这种处理方法并不全对。
         // 这里直接就加了括号，虽然从最后计算结果一定是对的，因为加多少层括号都不影响实际计算值。
@@ -63,4 +72,6 @@ const transform = (input) => {
 
 // console.log(transform("abcd-e*-f/+g-"));
 
-console.log(transform("ab*cd+*"));
+// console.log(transform("ab*cd+*"));
+
+console.log(transform("abc+-d*"));

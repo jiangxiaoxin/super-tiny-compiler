@@ -96,4 +96,6 @@ const testSuits = {
 
 // console.log(transform("a*b*(c+d)"));
 
-console.log(transform("a*(b*(c+d))"));
+// console.log(transform("a*(b*(c+d))"));
+
+console.log(transform("(a-(b+c))*d"));
